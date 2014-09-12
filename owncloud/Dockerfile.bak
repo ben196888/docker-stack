@@ -1,0 +1,15 @@
+FROM ubuntu:12.04
+MAINTAINER BenLiu "ben.liu@hopebaytech.com"
+RUN apt-get -y update && apt-get install -y apache2 libapache2-mod-php5 php5-gd php5-json php-xml-parser php5-mysql php5-curl php5-intl php5-sqlite php5-mcrypt php5-imagick smbclient curl libcurl3 bzip2 wget vim
+
+RUN wget -O - http://download.owncloud.org/community/owncloud-7.0.2.tar.bz2 | tar jx -C /var/www/
+RUN chown -R www-data:www-data /var/www/owncloud
+
+ADD ./default-ssl /etc/apache2/sites-available/
+ADD ./default /etc/apache2/sites-available/
+#RUN ln -s /etc/apache2/sites-available/001-owncloud.conf /etc/apache2/sites-enabled/
+RUN a2enmod rewrite
+
+EXPOSE :80
+
+CMD ["/usr/sbin/apache2ctl", "-D",  "owncloud"]
